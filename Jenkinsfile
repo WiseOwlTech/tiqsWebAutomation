@@ -106,6 +106,10 @@ pipeline {
                     sh '''
                       bash -s <<'BASH'
                       set -euo pipefail
+                      GROUP="${GROUP:-}"
+                      CLASS="${CLASS:-}"
+                      TEST_CASE="${TEST_CASE:-}"
+                      BROWSER="${BROWSER:-chromium}"
                       MODE="${MODE:-headless}"
 
                       if [ "${MODE}" = "headed" ]; then
