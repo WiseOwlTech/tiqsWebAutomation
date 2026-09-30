@@ -46,7 +46,11 @@ The pipeline installs Node 22 into the Jenkins home directory when `npm` is not 
 - `TEST_CASE` is optional. It matches one test title. Empty runs the whole spec.
 - `BROWSER` is a dropdown: `chromium`, `chrome`, `safari`, `firefox`, `edge`, `opera`. Safari runs WebKit. Opera needs the Opera app on the agent (`OPERA_PATH` can point at the executable).
 
-On a Linux agent, `npx playwright install --with-deps` installs the browser and its system libraries. HTML and JUnit results are archived from `playwright-report/` and `test-results/junit.xml`.
+On a Linux agent the pipeline installs Chromium, Firefox, and WebKit in one step. Their system libraries need root once inside the Jenkins container:
+
+`docker exec -u root jenkins bash -lc 'export PATH=/var/jenkins_home/.local/node-v22.20.0/bin:$PATH; cd /var/jenkins_home/workspace/web-automation && npx playwright install-deps'`
+
+HTML and JUnit results are archived from `playwright-report/` and `test-results/junit.xml`. A Jenkins run records a video of every test in that report.
 
 ## Browser
 

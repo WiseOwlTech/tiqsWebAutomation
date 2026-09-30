@@ -79,16 +79,14 @@ pipeline {
                     export PATH="${HOME}/.local/node-v${NODE_VERSION}/bin:${PATH}"
                   fi
                   npm ci
-                  case "${BROWSER}" in
-                    safari) BROWSER_PKG=webkit ;;
-                    firefox) BROWSER_PKG=firefox ;;
-                    *) BROWSER_PKG=chromium ;;
-                  esac
+                  # One install covers Chromium, Firefox, and WebKit (Safari).
+                  # Chrome, Edge, and Opera are separate apps and are not in this set.
                   if [ "$(id -u)" -eq 0 ]; then
-                    npx playwright install --with-deps "${BROWSER_PKG}"
-                  else
-                    npx playwright install "${BROWSER_PKG}"
+                    npx playwright install-deps
+                  elif command -v sudo >/dev/null 2>&1 && sudo -n true >/dev/null 2>&1; then
+                    sudo -E env "PATH=${PATH}" npx playwright install-deps
                   fi
+                  npx playwright install chromium firefox webkit
                 '''
             }
         }
