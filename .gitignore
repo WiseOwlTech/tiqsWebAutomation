@@ -1,0 +1,43 @@
+# Node
+node_modules/
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+# IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets and local env
+.env
+*.pem
+storage-state/
+auth-state/
+
+# Test artifacts
+test-output/
+allure-results/
+allure-report/
+playwright-report/
+test-results/
+screenshots/
+videos/
+traces/
+logs/
+*.log
+
+# Playwright browsers (installed locally, not committed)
+ms-playwright/
