@@ -45,6 +45,7 @@ The pipeline installs Node 22 into the Jenkins home directory when `npm` is not 
 - `CLASS` is optional. Use `login` or `tests/login.spec.js`. Empty runs the login spec.
 - `TEST_CASE` is optional. It matches one test title. Empty runs the whole spec.
 - `BROWSER` is a dropdown: `chromium`, `chrome`, `safari`, `firefox`, `edge`, `opera`. Safari runs WebKit. Opera needs the Opera app on the agent (`OPERA_PATH` can point at the executable).
+- `MODE` is a dropdown: `headless` (no UI) or `headed` (live browser in noVNC).
 
 On a Linux agent the pipeline installs Chromium, Firefox, and WebKit in one step. Their system libraries need root once inside the Jenkins container:
 

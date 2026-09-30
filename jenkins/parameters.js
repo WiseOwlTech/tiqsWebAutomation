@@ -12,6 +12,12 @@ const PARAMETERS = [
     choices: ['chromium', 'chrome', 'safari', 'firefox', 'edge', 'opera'],
     description: 'Browser. Safari runs the WebKit engine.',
   },
+  {
+    type: 'choice',
+    name: 'MODE',
+    choices: ['headless', 'headed'],
+    description: 'headless = no UI. headed = show browser in noVNC.',
+  },
 ];
 
 function stringParameter({ name, value, description }) {

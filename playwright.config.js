@@ -13,6 +13,17 @@ function operaExecutable() {
   return '/usr/bin/opera';
 }
 
+function isHeaded() {
+  if (process.env.PLAYWRIGHT_HEADED === '1') return true;
+  if (process.env.PLAYWRIGHT_HEADED === '0') return false;
+  if (process.env.MODE === 'headed') return true;
+  if (process.env.MODE === 'headless') return false;
+  if (process.env.DISPLAY) return true;
+  return !config.bool('headless', true);
+}
+
+const headed = isHeaded();
+
 module.exports = defineConfig({
   testDir: './tests',
   timeout: config.number('default.timeout.ms', 30000),
@@ -22,8 +33,8 @@ module.exports = defineConfig({
     : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: config.url(),
-    headless: process.env.DISPLAY ? false : config.bool('headless', true),
-    launchOptions: process.env.DISPLAY ? { slowMo: 150 } : {},
+    headless: !headed,
+    launchOptions: headed ? { slowMo: 150 } : {},
     screenshot: process.env.CI ? 'on' : 'only-on-failure',
     video: process.env.CI ? 'on' : 'retain-on-failure',
     trace: 'retain-on-failure',
