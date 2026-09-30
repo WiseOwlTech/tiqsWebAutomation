@@ -34,7 +34,15 @@ Add three Secret text credentials with these IDs:
 - `TIQS_OTP`
 - `TIQS_PIN`
 
-The agent needs Node.js and npm on `PATH`. The job parameter `BROWSER` defaults to `chromium`. On a Linux agent, `npx playwright install --with-deps` installs the browser and its system libraries. HTML and JUnit results are archived from `playwright-report/` and `test-results/junit.xml`.
+The agent needs Node.js and npm on `PATH`. Build parameters:
+
+- `BRANCH` is a text field. Type any branch name. The default is `web-automation`.
+- `GROUP` is optional. It matches a `test.describe` title, such as `Login PIN`.
+- `CLASS` is optional. Use `login` or `tests/login.spec.js`. Empty runs the login spec.
+- `TEST_CASE` is optional. It matches one test title. Empty runs the whole spec.
+- `BROWSER` is a dropdown: `chromium`, `chrome`, `safari`, `firefox`, `edge`, `opera`. Safari runs WebKit. Opera needs the Opera app on the agent (`OPERA_PATH` can point at the executable).
+
+On a Linux agent, `npx playwright install --with-deps` installs the browser and its system libraries. HTML and JUnit results are archived from `playwright-report/` and `test-results/junit.xml`.
 
 ## Browser
 

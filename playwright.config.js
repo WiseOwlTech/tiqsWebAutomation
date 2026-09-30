@@ -1,5 +1,17 @@
+const fs = require('fs');
 const { defineConfig, devices } = require('@playwright/test');
 const config = require('./config/configReader');
+
+function operaExecutable() {
+  if (process.env.OPERA_PATH) {
+    return process.env.OPERA_PATH;
+  }
+  const mac = '/Applications/Opera.app/Contents/MacOS/Opera';
+  if (fs.existsSync(mac)) {
+    return mac;
+  }
+  return '/usr/bin/opera';
+}
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -37,6 +49,13 @@ module.exports = defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'opera',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: { executablePath: operaExecutable() },
+      },
     },
   ],
 });
