@@ -55,6 +55,8 @@ docker run -d --name jenkins-live-view --restart unless-stopped \
   alpine:3.20 \
   sh -c "apk add --no-cache socat && exec socat TCP-LISTEN:6080,fork,reuseaddr TCP:${IP}:6080"
 
-echo "Live view is on http://192.168.4.30:${HOST_PORT}/vnc.html"
-echo "Open that page before the Jenkins build and click Connect."
-echo "If the Jenkins container is recreated, run this script again."
+echo "Live view is on http://192.168.4.30:${HOST_PORT}/vnc.html?autoconnect=true&resize=scale"
+echo "To auto-open the viewer on this Mac when a headed build starts, run in another terminal:"
+echo "  curl -fsSL -o /tmp/autoOpenLiveView.sh https://raw.githubusercontent.com/WiseOwlTech/tiqsWebAutomation/web-automation/jenkins/autoOpenLiveView.sh"
+echo "  bash /tmp/autoOpenLiveView.sh"
+echo "If the Jenkins container is recreated, run enableLiveView.sh again."

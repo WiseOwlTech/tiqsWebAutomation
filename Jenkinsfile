@@ -34,7 +34,7 @@ pipeline {
         choice(
             name: 'MODE',
             choices: ['headless', 'headed'],
-            description: 'headless = no UI (faster). headed = show browser in noVNC at http://192.168.4.30:6080/vnc.html'
+            description: 'headless = no UI (faster). headed = show browser in noVNC at http://192.168.4.30:6080/vnc.html?autoconnect=true&resize=scale'
         )
     }
 
@@ -137,7 +137,10 @@ pipeline {
                         if ! bash -c 'echo >/dev/tcp/127.0.0.1/6080' >/dev/null 2>&1; then
                           JENKINS_NODE_COOKIE=dontKillMe nohup websockify --web=/usr/share/novnc 6080 localhost:5900 >/tmp/novnc.log 2>&1 &
                         fi
-                        echo "Live view: open http://192.168.4.30:6080/vnc.html and click Connect"
+                        # Signal Mac host watcher (autoOpenLiveView.sh) to open the browser.
+                        touch /var/jenkins_home/live-view-open.request
+                        echo "Live view: http://192.168.4.30:6080/vnc.html?autoconnect=true&resize=scale"
+                        echo "If auto-open is enabled on jenkin-m1, the browser opens by itself."
                       else
                         unset DISPLAY || true
                         export PLAYWRIGHT_HEADED=0

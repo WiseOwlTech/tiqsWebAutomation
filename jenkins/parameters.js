@@ -16,7 +16,7 @@ const PARAMETERS = [
     type: 'choice',
     name: 'MODE',
     choices: ['headless', 'headed'],
-    description: 'headless = no UI. headed = show browser in noVNC.',
+    description: 'headless = no UI. headed = live browser; auto-opens on jenkin-m1 if autoOpenLiveView.sh is running.',
   },
 ];
 

@@ -57,7 +57,13 @@ Live browser view uses a virtual screen inside the existing Jenkins container. O
 
 `docker cp jenkins:/var/jenkins_home/workspace/web-automation/jenkins/enableLiveView.sh /tmp/enableLiveView.sh && bash /tmp/enableLiveView.sh`
 
-Then open `http://192.168.4.30:6080/vnc.html` and click Connect before the build. The pipeline runs headed on that screen. Run the script again if the Jenkins container is recreated.
+Auto-connect URL: `http://192.168.4.30:6080/vnc.html?autoconnect=true&resize=scale`.
+
+To open that page automatically on the Jenkins Mac when `MODE=headed`, leave this running on `jenkin-m1`:
+
+`bash /tmp/autoOpenLiveView.sh` (download from `jenkins/autoOpenLiveView.sh`).
+
+Remote laptops cannot be force-opened by Jenkins; use the URL above (autoconnect, no Connect click). Run `enableLiveView.sh` again if the Jenkins container is recreated.
 
 ## Browser
 
