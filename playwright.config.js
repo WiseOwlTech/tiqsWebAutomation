@@ -23,8 +23,8 @@ module.exports = defineConfig({
   use: {
     baseURL: config.url(),
     headless: config.bool('headless', true),
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    screenshot: process.env.CI ? 'on' : 'only-on-failure',
+    video: process.env.CI ? 'on' : 'retain-on-failure',
     trace: 'retain-on-failure',
     actionTimeout: config.number('action.timeout.ms', 15000),
     navigationTimeout: config.number('navigation.timeout.ms', 45000),
