@@ -22,7 +22,8 @@ module.exports = defineConfig({
     : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: config.url(),
-    headless: config.bool('headless', true),
+    headless: process.env.DISPLAY ? false : config.bool('headless', true),
+    launchOptions: process.env.DISPLAY ? { slowMo: 150 } : {},
     screenshot: process.env.CI ? 'on' : 'only-on-failure',
     video: process.env.CI ? 'on' : 'retain-on-failure',
     trace: 'retain-on-failure',

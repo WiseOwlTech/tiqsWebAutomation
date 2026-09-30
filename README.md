@@ -52,6 +52,12 @@ On a Linux agent the pipeline installs Chromium, Firefox, and WebKit in one step
 
 HTML and JUnit results are archived from `playwright-report/` and `test-results/junit.xml`. A Jenkins run records a video of every test in that report.
 
+Live browser view uses a virtual screen inside the existing Jenkins container. On the Jenkins machine, once, run:
+
+`docker cp jenkins:/var/jenkins_home/workspace/web-automation/jenkins/enableLiveView.sh /tmp/enableLiveView.sh && bash /tmp/enableLiveView.sh`
+
+Then open `http://192.168.4.30:6080/vnc.html` and click Connect before the build. The pipeline runs headed on that screen. Run the script again if the Jenkins container is recreated.
+
 ## Browser
 
 The default project is Chromium. Headless mode comes from `headless` in `config/config.properties`.

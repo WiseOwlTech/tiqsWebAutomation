@@ -99,6 +99,33 @@ pipeline {
                     string(credentialsId: 'TIQS_PIN', variable: 'TIQS_PIN')
                 ]) {
                     sh '''
+                      bash -s <<'BASH'
+                      set -euo pipefail
+                      if ! command -v Xvfb >/dev/null 2>&1 || ! command -v x11vnc >/dev/null 2>&1 || ! command -v websockify >/dev/null 2>&1; then
+                        echo "Live view is not installed in this Jenkins container."
+                        echo "On the Jenkins machine run:"
+                        echo "  docker cp jenkins:/var/jenkins_home/workspace/web-automation/jenkins/enableLiveView.sh /tmp/enableLiveView.sh"
+                        echo "  bash /tmp/enableLiveView.sh"
+                        exit 1
+                      fi
+
+                      export DISPLAY=:99
+                      if ! xdpyinfo -display :99 >/dev/null 2>&1; then
+                        JENKINS_NODE_COOKIE=dontKillMe nohup Xvfb :99 -screen 0 1440x900x24 -ac +extension GLX +render -noreset >/tmp/xvfb.log 2>&1 &
+                        sleep 1
+                      fi
+                      if ! xdpyinfo -display :99 >/dev/null 2>&1; then
+                        echo "Xvfb did not start. See /tmp/xvfb.log"
+                        exit 1
+                      fi
+                      if ! bash -c 'echo >/dev/tcp/127.0.0.1/5900' >/dev/null 2>&1; then
+                        JENKINS_NODE_COOKIE=dontKillMe nohup x11vnc -display :99 -nopw -forever -shared -rfbport 5900 >/tmp/x11vnc.log 2>&1 &
+                      fi
+                      if ! bash -c 'echo >/dev/tcp/127.0.0.1/6080' >/dev/null 2>&1; then
+                        JENKINS_NODE_COOKIE=dontKillMe nohup websockify --web=/usr/share/novnc 6080 localhost:5900 >/tmp/novnc.log 2>&1 &
+                      fi
+                      echo "Live view: open http://192.168.4.30:6080/vnc.html and click Connect"
+
                       case "${BROWSER}" in
                         safari) PROJECT=webkit ;;
                         chrome|chromium|firefox|edge|opera) PROJECT="${BROWSER}" ;;
@@ -123,6 +150,7 @@ pipeline {
                         set -- "$@" --grep "${TEST_CASE}"
                       fi
                       "$@"
+BASH
                     '''
                 }
             }
