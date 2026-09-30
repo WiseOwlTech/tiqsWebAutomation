@@ -5,7 +5,9 @@ module.exports = defineConfig({
   testDir: './tests',
   timeout: config.number('default.timeout.ms', 30000),
   retries: config.number('retry.count', 0),
-  reporter: [['list'], ['html', { open: 'never' }]],
+  reporter: process.env.CI
+    ? [['list'], ['html', { open: 'never' }], ['junit', { outputFile: 'test-results/junit.xml' }]]
+    : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: config.url(),
     headless: config.bool('headless', true),
