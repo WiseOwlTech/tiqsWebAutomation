@@ -26,7 +26,11 @@ Login secrets come from `.env` (`TIQS_MOBILE`, `TIQS_OTP`, `TIQS_PIN`). Copy `.e
 
 ## Jenkins
 
-The `Jenkinsfile` runs the login spec on the branch. Create a Pipeline job from SCM, point it at `web-automation`, and set the script path to `Jenkinsfile`.
+The `Jenkinsfile` runs the login spec on the branch.
+
+To create the job from code, fill the `JENKINS_*` values in `.env` and run `npm run jenkins:setup`. It creates or updates the Pipeline job and the three TIQS secret text credentials through the Jenkins REST API. `JENKINS_TOKEN` is an API token from your Jenkins user page. `JENKINS_GIT_CREDENTIALS_ID` is the GitHub credential ID Jenkins already uses for other jobs. Running it again updates the job instead of duplicating it.
+
+To create the job by hand instead, make a Pipeline job from SCM, point it at `web-automation`, and set the script path to `Jenkinsfile`.
 
 Add three Secret text credentials with these IDs:
 
@@ -34,7 +38,7 @@ Add three Secret text credentials with these IDs:
 - `TIQS_OTP`
 - `TIQS_PIN`
 
-The agent needs Node.js and npm on `PATH`. Build parameters:
+The pipeline installs Node 22 into the Jenkins home directory when `npm` is not already on `PATH`. Build parameters:
 
 - `BRANCH` is a text field. Type any branch name. The default is `web-automation`.
 - `GROUP` is optional. It matches a `test.describe` title, such as `Login PIN`.

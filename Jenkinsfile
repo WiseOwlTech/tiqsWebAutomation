@@ -35,6 +35,7 @@ pipeline {
 
     environment {
         CI = 'true'
+        PATH = "${env.HOME}/.local/node-v22.20.0/bin:${env.PATH}"
     }
 
     options {
@@ -64,12 +65,30 @@ pipeline {
         stage('Install') {
             steps {
                 sh '''
+                  if ! command -v npm >/dev/null 2>&1; then
+                    NODE_VERSION=22.20.0
+                    case "$(uname -m)" in
+                      aarch64|arm64) ARCH=arm64 ;;
+                      x86_64|amd64) ARCH=x64 ;;
+                      *) echo "Unsupported CPU: $(uname -m)"; exit 1 ;;
+                    esac
+                    mkdir -p "${HOME}/.local"
+                    curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${ARCH}.tar.gz" | tar -xz -C "${HOME}/.local"
+                    rm -rf "${HOME}/.local/node-v${NODE_VERSION}"
+                    mv "${HOME}/.local/node-v${NODE_VERSION}-linux-${ARCH}" "${HOME}/.local/node-v${NODE_VERSION}"
+                    export PATH="${HOME}/.local/node-v${NODE_VERSION}/bin:${PATH}"
+                  fi
                   npm ci
                   case "${BROWSER}" in
-                    safari) npx playwright install --with-deps webkit ;;
-                    firefox) npx playwright install --with-deps firefox ;;
-                    *) npx playwright install --with-deps chromium ;;
+                    safari) BROWSER_PKG=webkit ;;
+                    firefox) BROWSER_PKG=firefox ;;
+                    *) BROWSER_PKG=chromium ;;
                   esac
+                  if [ "$(id -u)" -eq 0 ]; then
+                    npx playwright install --with-deps "${BROWSER_PKG}"
+                  else
+                    npx playwright install "${BROWSER_PKG}"
+                  fi
                 '''
             }
         }
