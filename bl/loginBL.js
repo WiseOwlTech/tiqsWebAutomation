@@ -376,8 +376,22 @@ class LoginBL {
   async verifyLoggedIn() {
     await this.loginPage.waitUntilMpinFormHidden();
     await expect(this.loginPage.pinForm()).toBeHidden();
+    await this.dismissPostLoginModals();
     log.info('Login completed');
     return true;
+  }
+
+  async dismissPostLoginModals() {
+    const understand = this.loginPage.page.getByRole('button', { name: 'I Understand' });
+    try {
+      await understand.waitFor({ state: 'visible', timeout: 5000 });
+      await understand.click();
+      await understand.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+      log.info('Dismissed risk disclosure modal');
+    } catch {
+      // Modal does not always appear.
+    }
+    return this;
   }
 
   async reachOtpScreen() {

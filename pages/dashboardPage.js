@@ -1,26 +1,55 @@
+const { AppbarLocators } = require('../locators/appbarLocators');
+const { HomeLocators } = require('../locators/homeLocators');
+
+/**
+ * Home / dashboard actions. Locators come from HomeLocators + AppbarLocators.
+ */
 class DashboardPage {
   constructor(page) {
     this.page = page;
+    this.appbar = new AppbarLocators(page);
+    this.home = new HomeLocators(page);
   }
 
   watchlist() {
-    return this.page.getByText('Watchlist', { exact: true });
+    return this.appbar.watchlistNav();
   }
 
   funds() {
-    return this.page.getByText('AVAILABLE FUNDS');
+    return this.home.fundsCard();
   }
 
   screeners() {
-    return this.page.getByText('Screeners', { exact: true });
+    return this.home.screeners();
   }
 
   topStocks() {
-    return this.page.getByText("Today's Top Stocks");
+    return this.home.todaysTopStocks();
   }
 
   async openHome() {
-    await this.page.getByRole('link', { name: 'Home' }).click();
+    await this.appbar.homeNav().click();
+    await this.home.pageRoot().waitFor({ state: 'visible' });
+    return this;
+  }
+
+  async openOrders() {
+    await this.appbar.ordersNav().click();
+    return this;
+  }
+
+  async openHoldings() {
+    await this.appbar.holdingsNav().click();
+    return this;
+  }
+
+  async openPositions() {
+    await this.appbar.positionsNav().click();
+    return this;
+  }
+
+  async openWatchlist() {
+    await this.appbar.watchlistNav().click();
     return this;
   }
 
@@ -30,7 +59,17 @@ class DashboardPage {
   }
 
   async openTopStocks() {
-    await this.topStocks().locator('xpath=..').getByText('View All').click();
+    await this.home.todaysTopStocksViewAll().click();
+    return this;
+  }
+
+  async openScreenersViewAll() {
+    await this.home.screenersViewAll().click();
+    return this;
+  }
+
+  async addFunds() {
+    await this.home.addFundsButton().click();
     return this;
   }
 }

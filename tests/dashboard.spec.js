@@ -1,10 +1,10 @@
 const { test } = require('../fixtures/baseFixture');
 
-test('Dashboard core blocks visible after login', async ({ dashboardBL }) => {
+test('Home locator blocks are visible after login', async ({ dashboardBL }) => {
   await dashboardBL.verifyCoreBlocksAfterLogin();
 });
 
-test('Watchlist block is usable after login', async ({ dashboardBL }) => {
+test('Watchlist locator blocks are visible after login', async ({ dashboardBL }) => {
   await dashboardBL.verifyWatchlistAfterLogin();
 });
 

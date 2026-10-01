@@ -1,6 +1,9 @@
 const { test: base, expect } = require('@playwright/test');
 const { LoginBL } = require('../bl/loginBL');
 const { DashboardBL } = require('../bl/dashboardBL');
+const { PositionsBL } = require('../bl/positionsBL');
+const { HoldingsBL } = require('../bl/holdingsBL');
+const { OrdersBL } = require('../bl/ordersBL');
 const { ScreenersBL } = require('../bl/screenersBL');
 const { EarlySignalsBL } = require('../bl/earlySignalsBL');
 const { ProfileBL } = require('../bl/profileBL');
@@ -16,6 +19,15 @@ const test = base.extend({
   },
   dashboardBL: async ({ page }, use) => {
     await use(new DashboardBL(page));
+  },
+  positionsBL: async ({ page }, use) => {
+    await use(new PositionsBL(page));
+  },
+  holdingsBL: async ({ page }, use) => {
+    await use(new HoldingsBL(page));
+  },
+  ordersBL: async ({ page }, use) => {
+    await use(new OrdersBL(page));
   },
   screenersBL: async ({ page }, use) => {
     await use(new ScreenersBL(page));

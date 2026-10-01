@@ -13,18 +13,27 @@ class DashboardBL {
 
   async verifyCoreBlocksAfterLogin() {
     await new LoginBL(this.page).login();
-    await expect(this.dashboardPage.watchlist()).toBeVisible();
-    await expect(this.dashboardPage.funds()).toBeVisible();
-    await expect(this.dashboardPage.screeners()).toBeVisible();
-    await expect(this.dashboardPage.topStocks()).toBeVisible();
-    log.info('Dashboard core blocks are visible');
+    const home = this.dashboardPage.home;
+    await expect(home.pageRoot()).toBeVisible();
+    await expect(home.summaryCards()).toBeVisible();
+    await expect(home.fundsCard()).toBeVisible();
+    await expect(home.addFundsButton()).toBeVisible();
+    await expect(home.holdingsCard()).toBeVisible();
+    await expect(home.positionsCard()).toBeVisible();
+    await expect(home.screeners()).toBeVisible();
+    await expect(home.todaysTopStocks()).toBeVisible();
+    await expect(home.quickTrade()).toBeVisible();
+    await expect(home.indices()).toBeVisible();
+    log.info('Home locator blocks are visible');
     return true;
   }
 
   async verifyWatchlistAfterLogin() {
     await new LoginBL(this.page).login();
-    await expect(this.dashboardPage.watchlist()).toBeVisible();
-    log.info('Watchlist is visible');
+    await this.page.goto('/watchlist');
+    await expect(this.page.getByTestId('watchlist')).toBeVisible();
+    await expect(this.page.getByTestId('watchlist-search-input')).toBeVisible();
+    log.info('Watchlist locator blocks are visible');
     return true;
   }
 
