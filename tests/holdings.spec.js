@@ -4,7 +4,13 @@ test('Holdings locator blocks are visible after login', async ({ holdingsBL }) =
   await holdingsBL.verifyLocatorsAfterLogin();
 });
 
-test.fixme('Verify holdings summary shows invested value, current value, today\'s P&L and overall P&L', async () => {});
+// Case 110
+test('Verify holdings summary shows invested value, current value, today\'s P&L and overall P&L', async ({
+  holdingsBL,
+}) => {
+  await holdingsBL.verifyHoldingsSummary();
+});
+
 test.fixme('Verify the holdings list shows stock, quantity, average price, LTP, current value and P&L', async () => {});
 test.fixme('Verify profit P&L is green and loss P&L is red', async () => {});
 test.fixme('Verify holdings P&L matches (LTP - average) x quantity', async () => {});

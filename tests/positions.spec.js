@@ -4,7 +4,11 @@ test('Positions locator blocks are visible after login', async ({ positionsBL })
   await positionsBL.verifyLocatorsAfterLogin();
 });
 
-test.fixme('Verify positions summary shows booked profit, open loss and total P&L', async () => {});
+// Case 117
+test('Verify positions summary shows booked profit, open loss and total P&L', async ({ positionsBL }) => {
+  await positionsBL.verifyPositionsSummary();
+});
+
 test.fixme('Verify each position shows an Intraday or Delivery tag', async () => {});
 test.fixme('Verify Exit on an open position asks for confirmation', async () => {});
 test.fixme('Verify the position menu shows Convert, Add and Chart', async () => {});

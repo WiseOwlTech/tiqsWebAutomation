@@ -47,6 +47,18 @@ class AppbarLocators {
     return this.navLink('/watchlist');
   }
 
+  fundsNav() {
+    return this.page.getByRole('link', { name: /^Funds$/i }).or(this.navLink('/funds'));
+  }
+
+  ipoNav() {
+    return this.page.getByRole('link', { name: /^IPO$/i }).or(this.navLink('/ipo'));
+  }
+
+  researchNav() {
+    return this.page.getByRole('link', { name: /^Research$/i }).or(this.navLink('/research'));
+  }
+
   byTestId(testId) {
     return this.page.getByTestId(testId);
   }

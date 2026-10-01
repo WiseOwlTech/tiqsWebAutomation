@@ -11,13 +11,31 @@ class HoldingsBL {
     this.holdingsPage = new HoldingsPage(page);
   }
 
-  async verifyLocatorsAfterLogin() {
+  async loginAndOpen() {
     await new LoginBL(this.page).login();
     await this.holdingsPage.open();
+    return this;
+  }
+
+  async verifyLocatorsAfterLogin() {
+    await this.loginAndOpen();
     await expect(this.holdingsPage.pageRoot()).toBeVisible();
     await expect(this.holdingsPage.content()).toBeVisible();
     await expect(this.holdingsPage.summary()).toBeVisible();
     log.info('Holdings locator blocks are visible');
+    return true;
+  }
+
+  /** Case 110 — summary labels currently under holdings-summary */
+  async verifyHoldingsSummary() {
+    await this.loginAndOpen();
+    const summary = this.holdingsPage.summary();
+    await expect(summary).toBeVisible();
+    await expect(summary.getByText(/Invested Value/i).first()).toBeVisible();
+    await expect(summary.getByText(/Current Value/i).first()).toBeVisible();
+    await expect(summary.getByText(/Today'?s P&L/i).first()).toBeVisible();
+    await expect(summary.getByText(/Overall P&L/i).first()).toBeVisible();
+    log.info('Case 110: holdings summary');
     return true;
   }
 }
