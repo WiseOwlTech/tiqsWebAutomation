@@ -20,6 +20,11 @@ const defaultTimeout = headed
   ? config.number('headed.timeout.ms', 90000)
   : config.number('default.timeout.ms', 30000);
 
+const headedLaunch = {
+  ...(slowMo > 0 ? { slowMo } : {}),
+  args: ['--start-maximized'],
+};
+
 module.exports = defineConfig({
   testDir: './tests',
   timeout: defaultTimeout,
@@ -30,7 +35,8 @@ module.exports = defineConfig({
   use: {
     baseURL: config.url(),
     headless: !headed,
-    launchOptions: slowMo > 0 ? { slowMo } : {},
+    // Maximized window needs no fixed viewport in headed mode.
+    ...(headed ? { viewport: null, launchOptions: headedLaunch } : { launchOptions: {} }),
     screenshot: process.env.CI ? 'on' : 'only-on-failure',
     video: process.env.CI ? 'on' : 'retain-on-failure',
     trace: 'retain-on-failure',
@@ -40,15 +46,21 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: headed
+        ? { ...devices['Desktop Chrome'], viewport: null, deviceScaleFactor: undefined }
+        : { ...devices['Desktop Chrome'] },
     },
     {
       name: 'chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+      use: headed
+        ? { ...devices['Desktop Chrome'], channel: 'chrome', viewport: null, deviceScaleFactor: undefined }
+        : { ...devices['Desktop Chrome'], channel: 'chrome' },
     },
     {
       name: 'edge',
-      use: { ...devices['Desktop Edge'], channel: 'msedge' },
+      use: headed
+        ? { ...devices['Desktop Edge'], channel: 'msedge', viewport: null, deviceScaleFactor: undefined }
+        : { ...devices['Desktop Edge'], channel: 'msedge' },
     },
     {
       name: 'firefox',
@@ -62,9 +74,11 @@ module.exports = defineConfig({
       name: 'opera',
       use: {
         ...devices['Desktop Chrome'],
+        ...(headed ? { viewport: null, deviceScaleFactor: undefined } : {}),
         launchOptions: {
           executablePath: operaExecutable(),
           ...(slowMo > 0 ? { slowMo } : {}),
+          ...(headed ? { args: ['--start-maximized'] } : {}),
         },
       },
     },
