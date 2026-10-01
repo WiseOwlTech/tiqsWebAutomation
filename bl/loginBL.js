@@ -405,6 +405,62 @@ class LoginBL {
     await this.submitOtp();
     return this.verifyMpinStage();
   }
+
+  async verifyOnLobby() {
+    const page = this.loginPage.page;
+    if (!/\/home/.test(page.url())) {
+      await page.goto('/home', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    }
+    await expect(page.getByTestId('home-page')).toBeVisible({ timeout: 20000 });
+    log.info('Lobby / home page is visible');
+    return true;
+  }
+
+  /**
+   * Chrome (chromium) login → lobby, then same creds on Firefox.
+   * Refreshing Chrome should force the MPIN journey again.
+   */
+  static async verifySecondBrowserLoginForcesMpinOnFirst(playwright) {
+    const { isHeaded, slowMoMs } = require('../support/pace');
+    const headed = isHeaded();
+    const slowMo = slowMoMs();
+    const launchOptions = {
+      headless: !headed,
+      ...(slowMo > 0 ? { slowMo } : {}),
+    };
+
+    const chromeBrowser = await playwright.chromium.launch({
+      ...launchOptions,
+      ...(headed ? { args: ['--start-maximized'] } : {}),
+    });
+    const firefoxBrowser = await playwright.firefox.launch(launchOptions);
+
+    const chromePage = await chromeBrowser.newPage(
+      headed ? { viewport: null } : undefined
+    );
+    const firefoxPage = await firefoxBrowser.newPage();
+
+    try {
+      const chromeLogin = new LoginBL(chromePage);
+      await chromeLogin.login();
+      await chromeLogin.verifyOnLobby();
+      log.info('First browser (Chrome/Chromium) is on the lobby');
+
+      const firefoxLogin = new LoginBL(firefoxPage);
+      await firefoxLogin.login();
+      await firefoxLogin.verifyOnLobby();
+      log.info('Second browser (Firefox) logged in with the same credentials');
+
+      await chromePage.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
+      await expect(chromePage.getByTestId('login-pin-form')).toBeVisible({ timeout: 20000 });
+      await expect(chromePage.getByTestId('home-page')).toHaveCount(0);
+      log.info('After second-browser login, Chrome refresh shows the MPIN journey');
+      return true;
+    } finally {
+      await chromeBrowser.close().catch(() => {});
+      await firefoxBrowser.close().catch(() => {});
+    }
+  }
 }
 
 function maskedMobile(mobile) {

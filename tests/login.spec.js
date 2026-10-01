@@ -109,6 +109,14 @@ test.describe('Login PIN', () => {
     await loginBL.login();
   });
 
+  test('Verify login on a second browser forces MPIN on the first browser after refresh', async ({
+    playwright,
+  }) => {
+    test.setTimeout(180000);
+    const { LoginBL } = require('../bl/loginBL');
+    await LoginBL.verifySecondBrowserLoginForcesMpinOnFirst(playwright);
+  });
+
   test('Verify a wrong PIN shows an error and stays on the PIN screen', async ({ loginBL }) => {
     await loginBL.verifyWrongPinShowsError();
   });

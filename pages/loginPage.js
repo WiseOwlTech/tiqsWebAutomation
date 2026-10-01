@@ -11,7 +11,7 @@ class LoginPage {
   }
 
   async openLogin(url) {
-    await this.page.goto(url);
+    await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await pause(this.page);
     return this;
   }
