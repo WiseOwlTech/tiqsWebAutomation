@@ -1,3 +1,5 @@
+const { pause } = require('../support/pace');
+
 class ProfilePage {
   constructor(page) {
     this.page = page;
@@ -13,6 +15,7 @@ class ProfilePage {
 
   async openMenu() {
     await this.page.getByRole('button', { name: /profile/i }).click();
+    await pause(this.page);
     return this;
   }
 }

@@ -1,5 +1,6 @@
 const { HoldingsLocators } = require('../locators/holdingsLocators');
 const { AppbarLocators } = require('../locators/appbarLocators');
+const { pause } = require('../support/pace');
 
 /**
  * Holdings page actions. Locators come from HoldingsLocators.
@@ -14,6 +15,7 @@ class HoldingsPage {
   async open() {
     await this.page.goto('/holdings');
     await this.holdings.pageRoot().waitFor({ state: 'visible' });
+    await pause(this.page);
     return this;
   }
 

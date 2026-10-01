@@ -1,3 +1,5 @@
+const { pause } = require('../support/pace');
+
 class StockDetailPage {
   constructor(page) {
     this.page = page;
@@ -13,6 +15,7 @@ class StockDetailPage {
 
   async openTab(name) {
     await this.tab(name).click();
+    await pause(this.page);
     return this;
   }
 }

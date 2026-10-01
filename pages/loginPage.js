@@ -1,4 +1,5 @@
 const { LoginLocators } = require('../locators/loginLocators');
+const { typeVisible, pause, typeDelayMs } = require('../support/pace');
 
 /**
  * Playwright actions for the login page. Locators come from LoginLocators.
@@ -11,6 +12,7 @@ class LoginPage {
 
   async openLogin(url) {
     await this.page.goto(url);
+    await pause(this.page);
     return this;
   }
 
@@ -24,37 +26,38 @@ class LoginPage {
   }
 
   async typeMobile(value) {
-    const field = this.loginLocators.mobileInput();
-    await field.click();
-    await field.fill('');
-    await field.pressSequentially(value, { delay: 20 });
+    await typeVisible(this.loginLocators.mobileInput(), value);
+    await pause(this.page);
     return this;
   }
 
   async pasteMobile(value) {
     await this.loginLocators.mobileInput().fill(value);
+    await pause(this.page);
     return this;
   }
 
   async pressEnterOnMobile() {
     await this.loginLocators.mobileInput().press('Enter');
+    await pause(this.page);
     return this;
   }
 
   async requestOtp() {
     await this.loginLocators.getOtpButton().click();
+    await pause(this.page);
     return this;
   }
 
   async typeOtp(value) {
-    const field = this.loginLocators.otpInput();
-    await field.click();
-    await field.pressSequentially(value, { delay: 20 });
+    await typeVisible(this.loginLocators.otpInput(), value);
+    await pause(this.page);
     return this;
   }
 
   async continueAfterOtp() {
     await this.loginLocators.otpContinueButton().click();
+    await pause(this.page);
     return this;
   }
 
@@ -65,23 +68,25 @@ class LoginPage {
     await this.fillPinDigit(2, pin);
     await this.fillPinDigit(3, pin);
     await this.fillPinDigit(4, pin);
+    await pause(this.page);
     return this;
   }
 
   async typeIntoFirstPinBox(value) {
-    const field = this.loginLocators.pinDigit(1);
-    await field.click();
-    await field.pressSequentially(value, { delay: 40 });
+    await typeVisible(this.loginLocators.pinDigit(1), value);
+    await pause(this.page);
     return this;
   }
 
   async pressBackspaceOnPin() {
     await this.page.keyboard.press('Backspace');
+    await pause(this.page);
     return this;
   }
 
   async proceedAfterMpin() {
     await this.loginLocators.pinProceedButton().click();
+    await pause(this.page);
     return this;
   }
 
@@ -251,7 +256,16 @@ class LoginPage {
   }
 
   async fillPinDigit(index, pin) {
-    await this.loginLocators.pinDigit(index).fill(pin.charAt(index - 1));
+    const field = this.loginLocators.pinDigit(index);
+    const digit = pin.charAt(index - 1);
+    const delay = typeDelayMs();
+    await field.click();
+    if (delay > 0) {
+      await field.pressSequentially(digit, { delay });
+      await pause(this.page, Math.max(200, Math.floor(delay / 2)));
+    } else {
+      await field.fill(digit);
+    }
     return this;
   }
 }

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { defineConfig, devices } = require('@playwright/test');
 const config = require('./config/configReader');
+const { isHeaded, slowMoMs } = require('./support/pace');
 
 function operaExecutable() {
   if (process.env.OPERA_PATH) {
@@ -13,20 +14,15 @@ function operaExecutable() {
   return '/usr/bin/opera';
 }
 
-function isHeaded() {
-  if (process.env.PLAYWRIGHT_HEADED === '1') return true;
-  if (process.env.PLAYWRIGHT_HEADED === '0') return false;
-  if (process.env.MODE === 'headed') return true;
-  if (process.env.MODE === 'headless') return false;
-  if (process.env.DISPLAY) return true;
-  return !config.bool('headless', true);
-}
-
 const headed = isHeaded();
+const slowMo = slowMoMs();
+const defaultTimeout = headed
+  ? config.number('headed.timeout.ms', 90000)
+  : config.number('default.timeout.ms', 30000);
 
 module.exports = defineConfig({
   testDir: './tests',
-  timeout: config.number('default.timeout.ms', 30000),
+  timeout: defaultTimeout,
   retries: config.number('retry.count', 0),
   reporter: process.env.CI
     ? [['list'], ['html', { open: 'never' }], ['junit', { outputFile: 'test-results/junit.xml' }]]
@@ -34,7 +30,7 @@ module.exports = defineConfig({
   use: {
     baseURL: config.url(),
     headless: !headed,
-    launchOptions: headed ? { slowMo: 150 } : {},
+    launchOptions: slowMo > 0 ? { slowMo } : {},
     screenshot: process.env.CI ? 'on' : 'only-on-failure',
     video: process.env.CI ? 'on' : 'retain-on-failure',
     trace: 'retain-on-failure',
@@ -66,7 +62,10 @@ module.exports = defineConfig({
       name: 'opera',
       use: {
         ...devices['Desktop Chrome'],
-        launchOptions: { executablePath: operaExecutable() },
+        launchOptions: {
+          executablePath: operaExecutable(),
+          ...(slowMo > 0 ? { slowMo } : {}),
+        },
       },
     },
   ],

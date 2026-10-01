@@ -1,3 +1,5 @@
+const { pause } = require('../support/pace');
+
 class EarlySignalsPage {
   constructor(page) {
     this.page = page;
@@ -13,6 +15,7 @@ class EarlySignalsPage {
 
   async selectTerm(label) {
     await this.term(label).click();
+    await pause(this.page);
     return this;
   }
 }

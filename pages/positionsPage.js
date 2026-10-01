@@ -1,5 +1,6 @@
 const { PositionsLocators } = require('../locators/positionsLocators');
 const { AppbarLocators } = require('../locators/appbarLocators');
+const { typeVisible, pause } = require('../support/pace');
 
 /**
  * Positions page actions. Locators come from PositionsLocators.
@@ -14,18 +15,19 @@ class PositionsPage {
   async open() {
     await this.page.goto('/positions');
     await this.positions.pageRoot().waitFor({ state: 'visible' });
+    await pause(this.page);
     return this;
   }
 
   async search(symbol) {
-    const field = this.positions.searchInput();
-    await field.click();
-    await field.fill(symbol);
+    await typeVisible(this.positions.searchInput(), symbol);
+    await pause(this.page);
     return this;
   }
 
   async download() {
     await this.positions.downloadButton().click();
+    await pause(this.page);
     return this;
   }
 
