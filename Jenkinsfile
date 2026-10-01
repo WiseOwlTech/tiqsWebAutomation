@@ -17,13 +17,13 @@ pipeline {
         string(
             name: 'CLASS',
             defaultValue: '',
-            description: 'Optional spec, such as login or tests/login.spec.js. Leave empty to run the login spec.',
+            description: 'Spec(s). One name (login), comma list (dashboard,positions,holdings,orders), or pages for all locator screens. Empty = login.',
             trim: true
         )
         string(
             name: 'TEST_CASE',
             defaultValue: '',
-            description: 'Optional test title. Leave empty to run every test in the selected spec.',
+            description: 'Optional test title filter, e.g. locator. Leave empty to run every test in the selected spec(s).',
             trim: true
         )
         choice(
@@ -154,16 +154,32 @@ pipeline {
                       esac
 
                       if [ -z "${CLASS}" ]; then
-                        SPEC="tests/login.spec.js"
-                      elif printf '%s' "${CLASS}" | grep -q '^tests/'; then
-                        SPEC="${CLASS}"
-                      elif printf '%s' "${CLASS}" | grep -q '\\.spec\\.js$'; then
-                        SPEC="tests/${CLASS}"
+                        SPECS="tests/login.spec.js"
+                      elif [ "${CLASS}" = "pages" ] || [ "${CLASS}" = "locator-pages" ]; then
+                        SPECS="tests/dashboard.spec.js tests/positions.spec.js tests/holdings.spec.js tests/orders.spec.js"
                       else
-                        SPEC="tests/${CLASS}.spec.js"
+                        SPECS=""
+                        OLD_IFS="$IFS"
+                        IFS=', '
+                        # shellcheck disable=SC2086
+                        set -- ${CLASS}
+                        IFS="$OLD_IFS"
+                        for item in "$@"; do
+                          [ -z "${item}" ] && continue
+                          if printf '%s' "${item}" | grep -q '^tests/'; then
+                            SPECS="${SPECS} ${item}"
+                          elif printf '%s' "${item}" | grep -q '\\.spec\\.js$'; then
+                            SPECS="${SPECS} tests/${item}"
+                          else
+                            SPECS="${SPECS} tests/${item}.spec.js"
+                          fi
+                        done
+                        SPECS="$(printf '%s' "${SPECS}" | sed 's/^ *//')"
                       fi
 
-                      set -- npx playwright test "${SPEC}" --project="${PROJECT}" --workers=1
+                      echo "Running specs: ${SPECS}"
+                      # shellcheck disable=SC2086
+                      set -- npx playwright test ${SPECS} --project="${PROJECT}" --workers=1
                       if [ -n "${GROUP}" ]; then
                         set -- "$@" --grep "${GROUP}"
                       fi

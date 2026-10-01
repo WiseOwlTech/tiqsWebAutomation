@@ -42,7 +42,7 @@ The pipeline installs Node 22 into the Jenkins home directory when `npm` is not 
 
 - `BRANCH` is a text field. Type any branch name. The default is `web-automation`.
 - `GROUP` is optional. It matches a `test.describe` title, such as `Login PIN`.
-- `CLASS` is optional. Use `login` or `tests/login.spec.js`. Empty runs the login spec.
+- `CLASS` is optional. Use `login`, a comma list like `dashboard,positions,holdings,orders`, or `pages` for all locator screens. Empty runs the login spec.
 - `TEST_CASE` is optional. It matches one test title. Empty runs the whole spec.
 - `BROWSER` is a dropdown: `chromium`, `chrome`, `safari`, `firefox`, `edge`, `opera`. Safari runs WebKit. Opera needs the Opera app on the agent (`OPERA_PATH` can point at the executable).
 - `MODE` is a dropdown: `headless` (no UI) or `headed` (live browser in noVNC).

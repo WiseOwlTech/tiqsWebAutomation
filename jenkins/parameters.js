@@ -4,8 +4,8 @@ const { escapeXml } = require('./xml');
 const PARAMETERS = [
   { type: 'string', name: 'BRANCH', value: 'web-automation', description: 'Git branch. Type any branch name.' },
   { type: 'string', name: 'GROUP', value: '', description: 'Optional group, matching a describe title such as Login PIN.' },
-  { type: 'string', name: 'CLASS', value: '', description: 'Optional spec, such as login or tests/login.spec.js.' },
-  { type: 'string', name: 'TEST_CASE', value: '', description: 'Optional test title.' },
+  { type: 'string', name: 'CLASS', value: '', description: 'One spec, comma list, or pages for dashboard+positions+holdings+orders.' },
+  { type: 'string', name: 'TEST_CASE', value: '', description: 'Optional test title filter, e.g. locator.' },
   {
     type: 'choice',
     name: 'BROWSER',
